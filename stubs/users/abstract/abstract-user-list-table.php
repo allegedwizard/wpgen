@@ -68,18 +68,21 @@ abstract class AbstractUserListTable
 
     /**
      * `manage_users_custom_column` is a single global filter that fires for
-     * every custom user column, so we must short-circuit on columns we did
-     * not register before dispatching to a render method.
+     * every custom user column, including columns added by WordPress core or
+     * other plugins, so columns without a render_* method here are passed
+     * through untouched. Subclasses may override columns() to insert or reorder
+     * columns without populating $columns, so dispatch is keyed on the render
+     * method rather than the $columns property; a column this class registered
+     * via $columns but never renders is a developer error.
      */
     public function column_content( $output, $column_name, $user_id ) {
-        if ( ! isset( $this->columns[$column_name] ) ) {
-            return $output;
-        }
-
         $method = 'render_' . ltrim( $column_name, '_' );
 
         if ( ! method_exists( $this, $method ) ) {
-            throw new \BadMethodCallException( "No render method found for column '{$column_name}'. Expected method: {$method}()" );
+            if ( isset( $this->columns[$column_name] ) ) {
+                throw new \BadMethodCallException( "No render method found for column '{$column_name}'. Expected method: {$method}()" );
+            }
+            return $output;
         }
 
         ob_start();

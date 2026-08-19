@@ -35,19 +35,21 @@ abstract class AbstractPostTypeListTable
 
     /**
      * `manage_{$post_type}_posts_custom_column` fires for every custom column
-     * on the screen, including columns added by other plugins (e.g. Yoast's
-     * wpseo-score), so we must short-circuit on columns we did not register
-     * before dispatching to a render method.
+     * on the screen, including columns added by WordPress core or other plugins
+     * (e.g. Yoast's wpseo-score), so columns without a render_* method here are
+     * left to their owners. Subclasses may override columns() to insert or
+     * reorder columns without populating $columns, so dispatch is keyed on the
+     * render method rather than the $columns property; a column this class
+     * registered via $columns but never renders is a developer error.
      */
     public function column_content( $column_name, $post_id ) {
-        if ( ! isset( $this->columns[$column_name] ) ) {
-            return;
-        }
-
         $method = 'render_' . ltrim( $column_name, '_' );
 
         if ( ! method_exists( $this, $method ) ) {
-            throw new \BadMethodCallException( "No render method found for column '{$column_name}'. Expected method: {$method}()" );
+            if ( isset( $this->columns[$column_name] ) ) {
+                throw new \BadMethodCallException( "No render method found for column '{$column_name}'. Expected method: {$method}()" );
+            }
+            return;
         }
 
         $this->$method( $post_id );
