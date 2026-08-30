@@ -120,6 +120,13 @@ class Config
     }
 
 
+    /**
+     * @return array Gravity Forms add-on options.
+     */
+    public function gravityFormsOptions() {
+        return $this->loadConfigFile( 'gravity-forms-options' );
+    }
+
     public function componentApiOptions() {
         return $this->loadConfigFile( 'component-api-options' );
     }

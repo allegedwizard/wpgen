@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-30
+
+### Added
+- `create:gravity-forms` command -- scaffolds a Gravity Forms feed add-on into `src/GravityForms/`: `GravityFormsComponent` (registers the add-on on `gform_loaded` via `GFAddOn::register()`, shows an admin notice when Gravity Forms is inactive), `{Name}FeedAddOn` (a `GFFeedAddOn` subclass with feed list columns, feed settings made of a feed name, a `generic_map` field map, and `feed_condition` conditional logic, and a `process_feed()` that resolves the map with `get_generic_map_fields()` and writes an entry note), and `FilterEntryNotes` (brands the add-on notes, matched by `note_type` = the add-on slug). Optionally (prompt) a Forms > Settings tab: `{Name}SettingsPage` rendered with Gravity Forms settings markup (API URL + API key, nonce-protected save) backed by `{Name}Settings`, which extends the shared `AbstractSettings` (generated into `src/Abstract/` if missing, the same base `create:admin` uses) and honors a `{PREFIX}API_KEY` PHP constant over the saved key.
+- `config/gravity-forms-options.php` -- prompts for the add-on name and whether to add the settings tab; the slug (lowercase underscores, also the note type) and PascalCase class prefix are inferred from the name.
+- `stubs/gravity-forms/` directory with the component, feed add-on, entry-note filter, settings, and settings page stubs.
+
 ## 2026-07-13
 
 ### Fixed

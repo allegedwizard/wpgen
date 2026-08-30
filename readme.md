@@ -67,3 +67,16 @@ Then, run wpgen to get a list of commands.
 ** create: prefixed commands must run from the plugin root directory.
 
 ** component: prefixed commands must be run from the specific component directory.
+## Gravity Forms Add-On
+
+From the plugin root:
+
+```
+wpgen create:gravity-forms
+```
+
+Generates `src/GravityForms/` with a `GFFeedAddOn` subclass (feed list, feed
+settings with a generic field map and conditional logic, `process_feed()`
+writing entry notes), an entry-note avatar filter, and optionally a
+Forms > Settings tab backed by a Settings helper (API URL + key, with a
+`{PREFIX}API_KEY` constant override). Requires Gravity Forms 2.5+ on the site.
